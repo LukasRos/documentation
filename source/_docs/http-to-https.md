@@ -3,7 +3,7 @@ title: Switching Sites from HTTP to Secure HTTPS
 description: Best practice HTTPS configurations for WordPress and Drupal to fix mixed-content browser warnings and excessive redirects.
 tags: [security]
 ---
-Connect a custom domain to the Site Dashboard and point DNS at Pantheon to trigger the automated process of provisioning HTTPS. The platform will deploy a certificate for your custom domain to the target environment (typically Live) at which point, HTTPS is enabled. For details, see [Free and Automated HTTPS](/docs/free-https/).
+Connect a custom domain to the Site Dashboard and point DNS at Pantheon to trigger the automated process of provisioning HTTPS. The platform will deploy a certificate for your custom domain to the target environment (typically Live) at which point, HTTPS is enabled. For details, see [Free and Automated HTTPS](/docs/https/).
 
 The following describes how to switch WordPress and Drupal sites over from HTTP to HTTPS.
 
@@ -52,9 +52,18 @@ header("Content-Security-Policy-Report-Only: img-src https:; script-src https: '
 
 Use this as temporary solution while working to fix each problem at it's origin.
 ### Database cleanup
-Search the database dump for HTTP URLs to the domains used for the site.
-Update any HTTP URLs to be HTTPS.
-Success: After manually re-saving an updated piece of content (to clear the cache for the item), the page should load for a logged-in user with HTTPS with no mixed content warnings. This should show with a “Secure” label without warnings.
+Use the following techniques to replace insecure references to your domain in the site's database. The result should be that the browser loads pages of your WordPress or Drupal site securely with no warnings.
+
+#### WordPress
+Use [Terminus](/docs/terminus) to run `wp search-replace` to converts URLs from HTTP to HTTPS:
+
+```
+terminus remote:wp <site>.<env> -- search-replace 'https://www.example.com' 'https://www.example.com' --all-tables --verbose
+```
+#### Drupal
+
+
+
 
 ### Purge internal caches.
 Clear Drupal and WordPress object caches (in the database and/or in Redis).
